@@ -1,6 +1,7 @@
 import { getGh } from "./api/login";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import axios from "axios";
 
 function Login({ objex }) {
   const [formData, setFormData] = useState({
@@ -11,6 +12,18 @@ function Login({ objex }) {
   const router = useRouter();
   function toRegister() {
     router.push("/register");
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    try {
+      console.log("adey");
+      const response = await axios.post("/api/login", formData);
+      console.log(response);
+      router.push(`/${response.data.user.username}/dashboard`);
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <div className=" w-full transform scale-90 h-full flex flex-col justify-center items-center overflow-hidden">
@@ -49,7 +62,10 @@ function Login({ objex }) {
             placeholder="Password"
           />
 
-          <button className="bg-cyan-400 mb-4 w-full h-12 rounded-sm text-lg  font-semibold  px-3 py-1 ">
+          <button
+            onClick={handleLogin}
+            className="bg-cyan-400 mb-4 w-full h-12 rounded-sm text-lg  font-semibold  px-3 py-1 "
+          >
             SIGN IN
           </button>
 
@@ -72,7 +88,7 @@ export default Login;
 
 export async function getServerSideProps({ req, res }) {
   const objex = getGh();
-  console.log(objex);
+
   return {
     props: {
       objex,
