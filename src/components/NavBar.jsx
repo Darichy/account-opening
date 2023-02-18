@@ -1,7 +1,7 @@
 import React from "react";
 import Dropdown from "./Dropdown";
 import Link from "next/link";
-import { AuthContext } from "./AuthLayout";
+import { AuthContext } from "../layouts/AuthLayout";
 import { useContext } from "react";
 
 export default function NavBar({ user, asPath }) {
@@ -21,7 +21,7 @@ export default function NavBar({ user, asPath }) {
       <div>
         <ul className="flex">
           <li className="mr-5 cursor-pointer hover:text-cyan-500 hover:transform hover:scale-110 transition ease-in-out duration-150 hover:font-semibold ">
-            <Link href="/darichy/dashboard">Home</Link>
+            <Link href={`/${user.username}/dashboard`}>Home</Link>
           </li>
           <li
             onClick={() => toggleSliders("addPost")}

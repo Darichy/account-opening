@@ -6,21 +6,27 @@ import { imageConfigDefault } from "next/dist/shared/lib/image-config";
 export default function AddPost() {
   const [preview, setPreview] = useState(null);
   async function mediaPreview(e) {
-    setPreview(e.target.files[0]);
+    if (e.target.files) {
+      setPreview(e.target.files[0]);
+    }
     console.log(preview, "preview");
-    return console.log(URL.createObjectURL(preview));
-
-    axios.post("/upload", document.getElementById("file").value);
+    // return console.log(URL.createObjectURL(preview));
   }
+
   function handlePost() {}
   return (
     <motion.div
       initial={{ y: -40 }}
       animate={{ y: 50 }}
       //   exit={{ y: -50 }}
-      className="absolute bg-zinc-800 rounded px-3 py-2 z-40 shadow-sm shadow-gray-500 w-[80%]"
+      className="absolute bg-zinc-800 rounded-sm  py-1 z-40 shadow-sm shadow-gray-500 w-[50%]"
     >
-      {preview && <img src={URL.createObjectURL(preview)} />}
+      {preview?.type.match(/image.*/) && (
+        <img src={URL.createObjectURL(preview)} />
+      )}
+      {preview?.type.match(/video.*/) && (
+        <video controls autoPlay src={URL.createObjectURL(preview)}></video>
+      )}
 
       <textarea
         name=""

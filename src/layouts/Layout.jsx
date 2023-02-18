@@ -1,6 +1,6 @@
 import React from "react";
 import { Quicksand } from "@next/font/google";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -26,9 +26,7 @@ export default function Layout({ children }) {
       <div
         className={`${quicksand.className} h-screen bg-zinc-800 text-gray-100`}
       >
-        {/* <NavBar /> */}
-
-        {childrenWithProps}
+        {children}
       </div>
     </>
   );

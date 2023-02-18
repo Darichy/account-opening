@@ -1,9 +1,12 @@
 import { Collapse } from "@mantine/core";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Link from "next/link";
+import { AuthContext } from "@/layouts/AuthLayout";
 
 export default function Dropdown() {
   const [open, setOpen] = useState(false);
+  const { loggedInUser } = useContext(AuthContext);
+
   return (
     <div>
       <button
@@ -32,7 +35,7 @@ export default function Dropdown() {
       >
         <ul className="w-full">
           <li className="w-full">
-            <Link href="/darichy/profile" className="w-full">
+            <Link href={`/${loggedInUser.username}/profile`} className="w-full">
               Profile
             </Link>
           </li>
