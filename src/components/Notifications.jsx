@@ -1,9 +1,14 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 export default function Notifications() {
   return (
-    <div className="absolute bg-slate-800 w-1/5 right-0 transform -translate-x-8 transition ease-in-out duration-100">
-      Notifications
-    </div>
+    <motion.div
+      initial={{ x: 60 }}
+      animate={{ x: 0 }}
+      className=" z-40 bg-slate-800 w-1/5 right-0 "
+    >
+      Notification
+    </motion.div>
   );
 }

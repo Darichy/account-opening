@@ -21,5 +21,7 @@ db.sequelize = sequelize;
 db.Sequelize = sequelize;
 db.User = User(sequelize, Sequelize.DataTypes);
 db.Post = Post(sequelize, Sequelize.DataTypes);
+db.Post.belongsTo(db.User);
+db.User.hasMany(db.Post);
 
 export default db;

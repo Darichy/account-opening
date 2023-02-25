@@ -19,7 +19,7 @@ export default function NavBar({ user, asPath }) {
         />
       </div>
       <div>
-        <ul className="flex">
+        <ul className="flex items-center">
           <li className="mr-5 cursor-pointer hover:text-cyan-500 hover:transform hover:scale-110 transition ease-in-out duration-150 hover:font-semibold ">
             <Link href={`/${user.username}/dashboard`}>Home</Link>
           </li>

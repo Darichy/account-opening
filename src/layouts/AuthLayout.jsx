@@ -10,6 +10,8 @@ import axios from "axios";
 export const AuthContext = createContext();
 
 export default function AuthLayout({ children }) {
+  const [dateState, setDateState] = useState(new Date());
+
   const [openSliders, setOpenSliders] = useState({
     messages: false,
     notifications: false,
@@ -18,6 +20,8 @@ export default function AuthLayout({ children }) {
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   useEffect(() => {
+    setInterval(() => setDateState(new Date()), 30000);
+
     const fetchLoggedUser = async () => {
       try {
         const response = await axios.get("/api/getloggedinuser");
@@ -49,8 +53,8 @@ export default function AuthLayout({ children }) {
         <div className="bg-black">
           <div className="flex text-white ">
             <SideBar />
-            <div className="w-3/5 px-3 relative ">
-              {openSliders.addPost && <AddPost />}
+            <div className="w-3/5 max-h-screen overflow-y-auto  px-3 mx-auto relative ">
+              {openSliders.addPost && <AddPost toggleSliders={toggleSliders} />}
               {children}
             </div>
             {openSliders.notifications && <Notifications />}
