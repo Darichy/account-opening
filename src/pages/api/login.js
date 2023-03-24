@@ -8,14 +8,6 @@ import cookie, { serialize } from "cookie";
 import { NextRequest } from "next/server";
 
 const handler = nc();
-const obj = {
-  sals: "kjskdhd",
-  john: "kjskdhd",
-  slaxu: "kjskdhd",
-};
-export function getGh() {
-  return obj;
-}
 
 // handler.use((req) => {
 //   console.log(req.url);
@@ -77,7 +69,7 @@ handler.post(async (req, res) => {
       res.send("All fields are neccessary");
     }
   } catch (err) {
-    console.log(err);
+    res.status(204).send(err);
   }
 });
 

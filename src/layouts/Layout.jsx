@@ -9,22 +9,18 @@ const quicksand = Quicksand({
 });
 
 export default function Layout({ children }) {
-  function getLoggedInUser(user) {
-    console.log(user);
-  }
-
-  const childrenWithProps = React.Children.map(children, (child) => {
-    // Checking isValidElement is the safe way and avoids a
-    // typescript error too.
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, { getLoggedInUser });
-    }
-    return child;
-  });
+  // const childrenWithProps = React.Children.map(children, (child) => {
+  //   // Checking isValidElement is the safe way and avoids a
+  //   // typescript error too.
+  //   if (React.isValidElement(child)) {
+  //     return React.cloneElement(child, { getLoggedInUser });
+  //   }
+  //   return child;
+  // });
   return (
     <>
       <div
-        className={`${quicksand.className} h-screen bg-zinc-800 text-gray-100`}
+        className={`${quicksand.className} h-screen  overflow-clip bg-zinc-800 text-gray-100`}
       >
         {children}
       </div>

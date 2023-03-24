@@ -8,16 +8,35 @@ import User from "../models/User";
 dotenv.config();
 const handler = nc();
 
-export async function getAllPosts() {
-  const posts = await db.Post.findAll({
-    include: [
-      {
-        model: db.User,
-        attributes: ["id", "username", "profilePic"],
-      },
-    ],
-  });
-  return posts;
+export async function getAllPosts(userId) {
+  if (!userId) {
+    const posts = await db.Post.findAll({
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "username", "profilePic"],
+        },
+        {
+          model: db.Like,
+        },
+      ],
+    });
+    return posts;
+  } else {
+    const posts = await db.Post.findAll({
+      where: { userId: userId },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "username", "profilePic"],
+        },
+        {
+          model: db.Like,
+        },
+      ],
+    });
+    return posts;
+  }
 }
 handler.get(async (req, res) => {
   console.log("kk");

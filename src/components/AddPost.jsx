@@ -7,28 +7,29 @@ import { Text } from "@mantine/core";
 import { AuthContext } from "@/layouts/AuthLayout";
 
 export default function AddPost({ toggleSliders }) {
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState({});
 
   async function handlePost(e) {
+    const formData = new FormData();
+    formData.append("media", post.media);
+    formData.append("caption", post.caption);
     e.preventDefault();
-    console.log("clicked");
-    const response = await axios.get("http://localhost:8080/api/getPosts");
+    console.log(formData, "hdhk");
+    console.log("clickeddd", post, formData);
+    const response = await axios.post(
+      "http://localhost:8080/api/addPost",
+      formData
+    );
     console.log(response);
-    // try {
-    //   console.log("adey");
-    //   const response = await axios.post("/api/login", post);
-    //   console.log(response);
-    //   router.push(`/${response.data.user.username}/dashboard`);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    toggleSliders("");
   }
 
+  console.log(post);
   return (
     <motion.div
       initial={{ y: -40 }}
       animate={{ y: 50 }}
-      className="absolute bg-zinc-800 rounded-sm  py-1 z-40 shadow-sm shadow-gray-500 w-[50%]"
+      className="absolute bg-gradient-to-br from-black to-zinc-700 rounded-sm  py-2 px-3 z-40  w-[50%]"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +47,7 @@ export default function AddPost({ toggleSliders }) {
         />
       </svg>
 
-      <div className="text-white font-semibold">New Post</div>
+      <div className="text-white text-lg font-medium py-1">Create New Post</div>
       {post?.media?.type.match(/image.*/) && (
         <img src={URL.createObjectURL(post.media)} />
       )}
@@ -64,34 +65,34 @@ export default function AddPost({ toggleSliders }) {
           onDrop={(files) => {
             setPost((prev) => ({ ...prev, media: files[0] }));
           }}
-          className="bg-black border border-dashed border-cyan-500 hover:bg-black"
+          className="bg-black flex items-center border-2 mb-2 h-20 border-dashed border-cyan-500 hover:bg-black"
         >
-          <Dropzone.Accept>
-            <p className="text-green-700 bg-black">Yes</p>
-            {/* <IconUpload
-              size={50}
-              stroke={1.5}
-              color={theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]}
-            /> */}
-          </Dropzone.Accept>
-          <Dropzone.Reject>
-            <p className="text-red-700">No</p>
-
-            {/* <IconX
-              size={50}
-              stroke={1.5}
-              color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]}
-            /> */}
-          </Dropzone.Reject>
-
-          <div className="flex justify-center items-center text-cyan-500">
-            Drop file here
+          <div className="flex space-x-4 justify-center items-center hover:text-cyan-300 text-cyan-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-7 h-7"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+              />
+            </svg>
+            <p>Drop file here</p>
           </div>
         </Dropzone>
       )}
       {/* Select media
-        <input type="file" id="file" hidden onChange={mediaPreview} />
       </label> */}
+      {/* <input
+        type="file"
+        id="file"
+        onChange={(e) => console.log(e.target.files[0])}
+      /> */}
       <textarea
         name="caption"
         onChange={(e) => {
@@ -102,6 +103,7 @@ export default function AddPost({ toggleSliders }) {
         rows="4"
         className="caption w-full py-0.5 focus:outline-none ring-inset rounded px-3 bg-black focus:bg-black "
         autoFocus
+        placeholder="Write a caption ..."
       ></textarea>
       <div className="flex justify-between">
         <button

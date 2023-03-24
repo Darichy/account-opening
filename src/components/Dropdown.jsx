@@ -4,7 +4,7 @@ import { AuthContext } from "@/layouts/AuthLayout";
 import { Collapse, Menu } from "@mantine/core";
 import { Avatar, Indicator } from "@mantine/core";
 
-export default function Dropdown() {
+export default function Dropdown({ logout }) {
   const [open, setOpen] = useState(false);
   const { loggedInUser } = useContext(AuthContext);
 
@@ -36,29 +36,27 @@ export default function Dropdown() {
       <Menu.Dropdown className="absolute w-64 z-50  right-2 rounded-sm">
         <div className="bg-white w-64">
           <Link href={`/${loggedInUser.username}/profile`} className="w-full">
-            <Menu.Item>Profile</Menu.Item>
+            <Menu.Item>
+              <div className="flex space-x-2 items-center">
+                <img src="/user.png" className="w-6 h-6" />
+                <div>My Profile</div>
+              </div>
+            </Menu.Item>
           </Link>
 
-          <Menu.Item
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-                />
-              </svg>
-            }
+          <div
+            onClick={() => {
+              console.log("clicked");
+              logout();
+            }}
           >
-            Log out
-          </Menu.Item>
+            <Menu.Item>
+              <div className="flex space-x-2 items-center">
+                <img src="/logout.png" className="w-6 h-6" />
+                <div>Logout</div>
+              </div>
+            </Menu.Item>
+          </div>
         </div>
       </Menu.Dropdown>
     </Menu>
