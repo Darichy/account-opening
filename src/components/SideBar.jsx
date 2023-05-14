@@ -1,9 +1,10 @@
+import Link from "next/link";
 import { useState } from "react";
 
-export default function SideBar() {
+export default function SideBar({ user }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="bg-zinc-800 hidden md:block  w-1/5 rounded-r-sm transition ease-in-out duration-100 relative left-0 cursor-pointer ">
+    <div className="bg-zinc-800 mt-16  hidden md:block  w-1/5 rounded-r-sm transition ease-in-out duration-100 relative left-0 cursor-pointer ">
       {/* <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -18,8 +19,17 @@ export default function SideBar() {
           d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg> */}
-
-      <div className="flex mt-4 py-3 px-4 space-x-8 mx-3 rounded items-center hover:bg-zinc-900 group hover:text-cyan-500 font-semibold ">
+      <div className="px-4 w-full">
+        <input
+          type="text"
+          className="bg-zinc-900  mt-4  focus:bg-black  rounded py-[6px] px-3 w-full focus:outline-0 focus:ring-2 ring-inset  focus:ring-cyan-500"
+          placeholder="Search for something"
+        />
+      </div>
+      <Link
+        href={`/${user?.username}/dashboard`}
+        className="flex mt-4 py-3 px-4 space-x-8 mx-3 rounded items-center hover:bg-zinc-900 group hover:text-cyan-500 font-semibold "
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -31,7 +41,26 @@ export default function SideBar() {
         </svg>
 
         <p>Home</p>
-      </div>
+      </Link>
+      <Link
+        href={`/${user?.username}/explore`}
+        className="flex py-3 px-4 space-x-8 mx-3 rounded items-center hover:bg-zinc-900 group hover:text-cyan-500 font-semibold "
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            fillRule="evenodd"
+            d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z"
+            clipRule="evenodd"
+          />
+        </svg>
+
+        <p>Explore</p>
+      </Link>
       <div className="flex  py-3 px-4 space-x-8 mx-3 rounded items-center hover:bg-zinc-900 group hover:text-cyan-500 font-semibold ">
         <svg
           xmlns="http://www.w3.org/2000/svg"

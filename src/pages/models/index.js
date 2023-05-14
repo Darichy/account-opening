@@ -3,7 +3,7 @@ import User from "./User";
 import dotenv from "dotenv";
 import Post from "./Post";
 import Like from "./Like";
-
+import Follow from "./Follow";
 dotenv.config();
 
 const sequelize = new Sequelize(
@@ -23,11 +23,13 @@ db.sequelize = sequelize;
 db.Sequelize = sequelize;
 db.User = User(sequelize, Sequelize.DataTypes);
 db.Like = Like(sequelize, Sequelize.DataTypes);
+db.Follow = Follow(sequelize, Sequelize.DataTypes);
 db.Post = Post(sequelize, Sequelize.DataTypes);
 db.Post.belongsTo(db.User);
 db.Like.belongsTo(db.Post);
 db.Like.belongsTo(db.User);
 db.User.hasMany(db.Post);
 db.Post.hasMany(db.Like);
-
+db.Follow.belongsTo(db.User, { as: "follower", foreignKey: "followerId" });
+db.Follow.belongsTo(db.User, { as: "following", foreignKey: "followingId" });
 export default db;

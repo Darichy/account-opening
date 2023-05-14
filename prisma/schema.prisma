@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  username    String
+  email       String   @unique
+  password    String
+  profile_pic String?
+  cover_pic   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  Post        Post[]
+  Like        Like[]
+  followers   Follow[] @relation("follower")
+  following   Follow[] @relation("following")
+}
+
+model Post {
+  id         String   @id @default(uuid())
+  caption    String?
+  media      String?
+  author     User     @relation(fields: [userId], references: [id])
+  userId     String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  likes      Like[]
+}
+
+model Like {
+  id         String   @id @default(uuid())
+  author     User     @relation(fields: [userId], references: [id])
+  userId     String
+  post       Post     @relation(fields: [postId], references: [id])
+  postId     String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  follower    User     @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User     @relation("following", fields: [followingId], references: [id])
+  followingId String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}

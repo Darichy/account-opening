@@ -2,44 +2,37 @@ import nc from "next-connect";
 import dotenv from "dotenv";
 import { verify } from "jsonwebtoken";
 import Post from "../models/Post";
-import db from "../models";
+// import db from "../models";
+import { prisma } from "prisma/db/config";
 import User from "../models/User";
 
 dotenv.config();
 const handler = nc();
 
-export async function getAllPosts(userId) {
-  if (!userId) {
-    const posts = await db.Post.findAll({
-      include: [
-        {
-          model: db.User,
-          attributes: ["id", "username", "profilePic"],
+export async function getAllPosts() {
+  const posts = await prisma.post.findMany({
+    include: {
+      likes: {
+        select: {
+          postId: true,
+          userId: true,
         },
-        {
-          model: db.Like,
+      },
+      author: {
+        select: {
+          id: true,
+          username: true,
+          followers: true,
         },
-      ],
-    });
-    return posts;
-  } else {
-    const posts = await db.Post.findAll({
-      where: { userId: userId },
-      include: [
-        {
-          model: db.User,
-          attributes: ["id", "username", "profilePic"],
-        },
-        {
-          model: db.Like,
-        },
-      ],
-    });
-    return posts;
-  }
+      },
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+  return posts;
 }
 handler.get(async (req, res) => {
-  console.log("kk");
   const posts = await getAllPosts();
 
   res.send(posts);

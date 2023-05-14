@@ -1,4 +1,4 @@
-import { getGh } from "./api/login";
+// import { getGh } from "./api/login";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import axios from "axios";
@@ -157,12 +157,12 @@ function Register({ objex }) {
 
 export default Register;
 
-export async function getServerSideProps() {
-  const objex = getGh();
-  console.log(objex);
-  return {
-    props: {
-      objex,
-    },
-  };
-}
+// export async function getServerSideProps() {
+//   const objex = getGh();
+//   console.log(objex);
+//   return {
+//     props: {
+//       objex,
+//     },
+//   };
+// }

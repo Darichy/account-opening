@@ -1,26 +1,38 @@
 import { compare, compareSync } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import nc from "next-connect";
-import db from "../models";
-import dotenv from "dotenv";
-dotenv.config();
-import cookie, { serialize } from "cookie";
+import { serialize } from "cookie";
 import { NextRequest } from "next/server";
-
+import { verify } from "jsonwebtoken";
+import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "prisma/db/config";
 const handler = nc();
 
 // handler.use((req) => {
 //   console.log(req.url);
 // });
+// const verifyJwt = (req, res, next) => {
+//   if (req.cookies.accessToken) {
+//     verify(req.cookies.accessToken, process.env.SECRET_KEY, (error, data) => {
+//       if (error) {
+//         console.log("well");
+//       } else {
+//         res.redirect("back");
+//         console.log(data);
+//       }
+//     });
+//   } else if (!req.cookies.accessToken) {
+//     next();
+//   }
+// };
+
+// handler.use(verifyJwt);
 
 handler.post(async (req, res) => {
   try {
-    // return console.log(req.url);
-    db.sequelize.sync();
-
     const { username, password } = req.body;
     if (username && password) {
-      const user = await db.User.findOne({
+      const user = await prisma.User.findFirst({
         where: {
           username,
         },
@@ -47,7 +59,7 @@ handler.post(async (req, res) => {
             }),
             serialize("accessToken", accessToken, {
               httpOnly: true,
-              maxAge: 60,
+              maxAge: 60 * 60,
               sameSite: "strict",
               path: "/",
             }),
@@ -60,16 +72,18 @@ handler.post(async (req, res) => {
             },
           });
         } else {
-          res.send("Incorrect username or passowrd");
+          res.status(207).send("Incorrect username or passowrd");
         }
       } else {
-        res.send("Incorrect username or passowrd");
+        res.status(207).send("Incorrect username or passowrd");
       }
     } else {
       res.send("All fields are neccessary");
     }
   } catch (err) {
-    res.status(204).send(err);
+    console.log(err);
+    res.send(err);
+    res.status(204).end();
   }
 });
 

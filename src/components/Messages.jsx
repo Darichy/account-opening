@@ -1,18 +1,67 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
+import ChatBox from "./ChatBox";
+import MyTabs from "./MyTabs";
+import Chats from "./Chats";
+import { Dialog } from "@mantine/core";
 
-export default function Messages() {
+export default function Messages({ isOpen, setOpenSliders }) {
+  const [open, setOpen] = useState(false);
+  const drawerRef = useRef(null);
+
+  useEffect(() => {
+    // console.log(drawerRef.current);
+    function handleClickOutside(event) {
+      if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+        setOpenSliders((prev) => ({
+          ...prev,
+          messages: false,
+        }));
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [drawerRef]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setOpen(false);
+    }, 5000);
+  }, [open]);
+  // const { loggedInUser } = useSelector((state) => state.user);
+  // console.log({ loggedInUser });
   return (
-    <motion.div
-      initial={{ x: 60 }}
-      animate={{ x: 0 }}
-      className=" z-40 bg-zinc-800  w-[85%]"
+    // <motion.div
+    //   initial={{ x: 60 }}
+    //   animate={{ x: 0 }}
+    //   className=" z-40  absolute  w-full h-[90vh]"
+    // >
+    //   <Dialog
+    //     transition="scale-x"
+    //     position={{ top: 20, left: 20 }}
+    //     opened={open}
+    //   >
+    //     hhh
+    //   </Dialog>
+
+    // </motion.div>
+
+    <div
+      ref={drawerRef}
+      className={`fixed top-0 right-0 bg-zinc-800 h-[92vh] mt-16 w-[25%] border-l border-l-zinc-600 rounded-l-md shadow transition ease-in-out duration-300 transform ${
+        isOpen ? "translate-x-0" : "translate-x-full"
+      }`}
     >
-      <div>
+      <div className="px-2">
         <div className="flex justify-between">
           <p>Chats</p>
-          <div className="flex space-x-1">
+          <div className="flex space-x-1 py-2">
             <svg
+              onClick={() => setOpen(true)}
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
@@ -41,14 +90,14 @@ export default function Messages() {
         <div className="relative my-3">
           <input
             type="text"
-            className="bg-zinc-700  hover:bg-zinc-900 focus:bg-black  rounded-sm py-1 mt-3 pl-7  focus:outline-0 focus:ring-2 ring-inset  focus:ring-cyan-500"
+            className="bg-zinc-900 focus:bg-black w-full  rounded py-[6px] mt-3 pl-7  focus:outline-0 focus:ring-2 ring-inset  focus:ring-cyan-500"
             placeholder="Search here ..."
           />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="w-5 h-5 stroke-slate-500 absolute top-4 left-1"
+            className="w-[18px] h-[18px] stroke-slate-500 absolute top-[19px] left-1"
           >
             <path
               fillRule="evenodd"
@@ -57,33 +106,9 @@ export default function Messages() {
             />
           </svg>
         </div>
-        <div className="flex justify-around">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-          >
-            <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-          >
-            <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-          >
-            <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
-          </svg>
-        </div>
+
+        <MyTabs />
       </div>
-    </motion.div>
+    </div>
   );
 }

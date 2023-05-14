@@ -1,35 +1,64 @@
-import { useState, useContext } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { imageConfigDefault } from "next/dist/shared/lib/image-config";
 import { Dropzone } from "@mantine/dropzone";
 import { Text } from "@mantine/core";
 import { AuthContext } from "@/layouts/AuthLayout";
+import { useDispatch } from "react-redux";
+import { setPostRefetch } from "@/store/postSlice";
 
-export default function AddPost({ toggleSliders }) {
+export default function AddPost({ toggleSliders, isOpen, setOpenSliders }) {
   const [post, setPost] = useState({});
+  const dispatch = useDispatch();
 
   async function handlePost(e) {
     const formData = new FormData();
     formData.append("media", post.media);
     formData.append("caption", post.caption);
     e.preventDefault();
-    console.log(formData, "hdhk");
-    console.log("clickeddd", post, formData);
+    // console.log(formData, "hdhk");
+    // console.log("clickeddd", post, formData);
     const response = await axios.post(
       "http://localhost:8080/api/addPost",
       formData
     );
+    dispatch(setPostRefetch());
     console.log(response);
-    toggleSliders("");
+    // setPosted((prev) => !prev);
+
+    setOpenSliders((prev) => ({
+      ...prev,
+      addPost: false,
+    }));
   }
 
-  console.log(post);
+  const drawerRef = useRef(null);
+
+  useEffect(() => {
+    // console.log(drawerRef.current);
+    function handleClickOutside(event) {
+      if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+        setOpenSliders((prev) => ({
+          ...prev,
+          addPost: false,
+        }));
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [drawerRef]);
+
   return (
-    <motion.div
-      initial={{ y: -40 }}
-      animate={{ y: 50 }}
-      className="absolute bg-gradient-to-br from-black to-zinc-700 rounded-sm  py-2 px-3 z-40  w-[50%]"
+    <div
+      ref={drawerRef}
+      className={`fixed top-0 left-1/3 z-50 bg-[whitesmoke] mt-16 w-[30%] text-zinc-900   border border-zinc-600 rounded-md shadow transition ease-in-out duration-300 transform ${
+        isOpen ? "translate-y-0 opacity-100" : " -translate-y-full opacity-0"
+      }`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +67,12 @@ export default function AddPost({ toggleSliders }) {
         strokeWidth={1.5}
         stroke="currentColor"
         className="w-6 h-6 absolute top-2 right-4 cursor-pointer"
-        onClick={() => toggleSliders("addPost")}
+        onClick={() => {
+          setOpenSliders((prev) => ({
+            ...prev,
+            addPost: false,
+          }));
+        }}
       >
         <path
           strokeLinecap="round"
@@ -47,7 +81,9 @@ export default function AddPost({ toggleSliders }) {
         />
       </svg>
 
-      <div className="text-white text-lg font-medium py-1">Create New Post</div>
+      <div className=" text-lg font-medium py-1 text-zinc-800">
+        Create New Post
+      </div>
       {post?.media?.type.match(/image.*/) && (
         <img src={URL.createObjectURL(post.media)} />
       )}
@@ -65,7 +101,7 @@ export default function AddPost({ toggleSliders }) {
           onDrop={(files) => {
             setPost((prev) => ({ ...prev, media: files[0] }));
           }}
-          className="bg-black flex items-center border-2 mb-2 h-20 border-dashed border-cyan-500 hover:bg-black"
+          className="bg-gray-200 flex items-center border-2 mb-2 h-20 border-dashed border-cyan-500 "
         >
           <div className="flex space-x-4 justify-center items-center hover:text-cyan-300 text-cyan-500">
             <svg
@@ -93,6 +129,7 @@ export default function AddPost({ toggleSliders }) {
         id="file"
         onChange={(e) => console.log(e.target.files[0])}
       /> */}
+
       <textarea
         name="caption"
         onChange={(e) => {
@@ -101,18 +138,18 @@ export default function AddPost({ toggleSliders }) {
         }}
         cols="30"
         rows="4"
-        className="caption w-full py-0.5 focus:outline-none ring-inset rounded px-3 bg-black focus:bg-black "
+        className="caption w-full py-0.5 focus:outline-none ring-inset rounded px-3  "
         autoFocus
         placeholder="Write a caption ..."
       ></textarea>
-      <div className="flex justify-between">
+      <div className="flex justify-center">
         <button
           onClick={handlePost}
-          className="bg-blue-500 px-3 font-semibold rounded py-2"
+          className="bg-blue-500 px-3 font-semibold rounded py-1 w-1/2 text-white"
         >
           Add Post
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

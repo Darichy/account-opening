@@ -1,27 +1,26 @@
 import nc from "next-connect";
-import db from "../models";
-import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
+import { prisma } from "prisma/db/config";
 
 const handler = nc();
-const obj = {
-  sals: "kjskdhd",
-  john: "kjskdhd",
-  slaxu: "kjskdhd",
-};
-export function getGh() {
-  return obj;
-}
+// const obj = {
+//   sals: "kjskdhd",
+//   john: "kjskdhd",
+//   slaxu: "kjskdhd",
+// };
+// export function getGh() {
+//   return obj;
+// }
 
 handler.post(async (req, res) => {
   try {
-    db.sequelize.sync();
-
+    const response = await prisma.user.findMany();
+    // return console.log(response);
     const { username, password, email } = req.body;
     if (username && email && password) {
-      const user = await db.User.findOne({
+      const user = await prisma.user.findFirst({
         where: {
-          [Op.or]: [{ username }, { email }],
+          OR: [{ username }, { email }],
         },
       });
 
@@ -29,10 +28,12 @@ handler.post(async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         let hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUser = await db.User.create({
-          username,
-          password: hashedPassword,
-          email,
+        const newUser = await prisma.user.create({
+          data: {
+            username,
+            password: hashedPassword,
+            email,
+          },
         });
         res.send(
           `${newUser.username} Your account has been created successfully`

@@ -10,23 +10,37 @@ import useSWR from "swr";
 import axios from "axios";
 import Loader from "@/components/Loader";
 import { Overlay, Modal } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import moment from "moment/moment";
-
+import { useContext } from "react";
+import { AuthContext } from "../../layouts/AuthLayout";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
 
-const fetcher = async (url) => {
-  const response = await axios.get(url);
-  return response;
-};
 export default function dashboard({ posts }) {
+  // const { posted } = useContext(AuthContext);
+  const { postRefetch } = useSelector((state) => state.post);
+  const [allPost, setAllPost] = useState(posts);
+  const isMounted = useRef(false);
   const [inspectPost, setInspectPost] = useState(false);
   const [post, setPost] = useState("");
-  const { data: allPost, error: allPostError } = useSWR(
-    "http://localhost:8080/api/getPosts",
-    fetcher
-  );
+
+  useEffect(() => {
+    if (isMounted.current) {
+      axios.get("http://localhost:8080/api/getPosts").then((response) => {
+        console.log(response);
+        setAllPost(response.data);
+      });
+      console.log("Component re-rendered");
+    } else {
+      // This block of code will run on the initial render
+      console.log("Component mounted");
+      isMounted.current = true;
+    }
+  }, [postRefetch]);
+
+  console.log({ postRefetch });
 
   const handleFetchPost = async (id) => {
     setInspectPost(true);
@@ -35,16 +49,12 @@ export default function dashboard({ posts }) {
     setPost(response.data);
   };
 
-  if (allPostError) {
-    return <p>{error.message}</p>;
-  }
-
   if (!allPost) {
     return <Loader />;
   }
 
-  console.log(post, "post");
-  console.log(posts);
+  // console.log(post, "post");
+  console.log(allPost, "kdlfkl");
   return (
     <>
       <Modal
@@ -96,13 +106,13 @@ export default function dashboard({ posts }) {
 
       <div className="w-full">
         <div className="flex flex-col items-center">
-          {allPost?.data.map((i, key) => (
+          {allPost.map((i, key) => (
             <PostCard
               handleFetchPost={handleFetchPost}
               key={key}
               id={i.id}
               postLikes={i.likes.length}
-              user={i.user}
+              user={i.author}
               caption={i.caption}
               media={i.media}
               createdAt={i.createdAt}

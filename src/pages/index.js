@@ -2,10 +2,30 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import io from "socket.io-client";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [chat, setChat] = useState(["kain", "jdhd"]);
+  const socket = io.connect("http://localhost:3000");
+
+  function joinRoom() {
+    console.log("clicked");
+    socket.emit("join_room", "123");
+  }
+  function sendChat() {
+    console.log("clicked");
+    socket.emit("send_message", document.getElementById("acc").value);
+  }
+
+  useEffect(() => {
+    socket.on("receive_message", (data) => {
+      console.log(data);
+      setChat((prev) => [...prev, data]);
+    });
+  }, [socket]);
+
+  console.log(chat, "chat");
   return (
     <>
       <Head>
@@ -16,6 +36,22 @@ export default function Home() {
       </Head>
       <div className="bg-blue-700 px-4 py-1 text-white font-semibold">
         Home Page
+      </div>
+      <div className="bg-white h-full text-black">
+        <input
+          type="text"
+          className="border text-black"
+          id="acc"
+          onKeyPress={(e) => {
+            e.key === "Enter" && sendChat();
+          }}
+        />
+        <button onClick={joinRoom} className="border text-black">
+          Join Room
+        </button>
+        {chat.map((i) => (
+          <div className="text-black">{i}</div>
+        ))}
       </div>
     </>
   );

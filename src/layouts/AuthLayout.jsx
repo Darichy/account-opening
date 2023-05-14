@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useRef } from "react";
 import NavBar from "../components/NavBar";
 import SideBar from "../components/SideBar";
 import { useRouter } from "next/router";
@@ -7,6 +7,8 @@ import Messages from "../components/Messages";
 import AddPost from "../components/AddPost";
 import axios from "axios";
 import { Accordion } from "@mantine/core";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoggedInUser } from "@/store/userSlice";
 
 export const AuthContext = createContext();
 
@@ -18,15 +20,19 @@ export default function AuthLayout({ children }) {
     notifications: false,
     addPost: false,
   });
-  const [loggedInUser, setLoggedInUser] = useState(null);
+
+  const dispatch = useDispatch();
+  const { loggedInUser } = useSelector((state) => state.user);
+  const drawerRef = useRef(null);
 
   useEffect(() => {
-    setInterval(() => setDateState(new Date()), 30000);
+    // setInterval(() => setDateState(new Date()), 30000);
 
     const fetchLoggedUser = async () => {
       try {
         const response = await axios.get("/api/getloggedinuser");
-        setLoggedInUser(response.data);
+
+        dispatch(setLoggedInUser(response.data));
       } catch (err) {
         console.log(err);
       }
@@ -34,32 +40,42 @@ export default function AuthLayout({ children }) {
     fetchLoggedUser();
   }, []);
 
+  // console.log({ loggedInUser });
   async function logout() {
-    console.log("clicked");
+    // console.log("clicked");
     try {
       const response = await axios.post("/api/logout");
       console.log(response);
       if (response) {
+        dispatch(setLoggedInUser(""));
         router.push("/login");
       }
     } catch (error) {
       console.log(error);
     }
   }
+
   function toggleSliders(slider) {
     Object.keys(openSliders).map((i) => {
       setOpenSliders((prev) => ({
         ...prev,
         [i]: false,
-        [slider]: !prev[slider],
+        [slider]: true,
       }));
     });
   }
+  console.log({ openSliders });
   const router = useRouter();
   const { asPath } = router;
+  const [posted, setPosted] = useState(false);
+
   return (
     <AuthContext.Provider
-      value={{ toggleSliders: toggleSliders, loggedInUser: loggedInUser }}
+      value={{
+        toggleSliders: toggleSliders,
+
+        posted,
+      }}
     >
       <div className="w-full h-full overflow-clip  overflow-x-hidden">
         {loggedInUser && (
@@ -67,13 +83,18 @@ export default function AuthLayout({ children }) {
         )}
         <div className="bg-[#161616] h-full">
           <div className="flex text-white h-full ">
-            <SideBar />
-            <div className="md:w-3/5 h-full overflow-y-auto  px-3 flex justify-center  ">
-              {openSliders.addPost && <AddPost toggleSliders={toggleSliders} />}
-              <div className="w-full">{children}</div>
+            <SideBar user={loggedInUser} />
+            <div className="md:w-[50%] h-full overflow-y-auto  px-3 flex justify-center  ">
+              <AddPost
+                toggleSliders={toggleSliders}
+                setOpenSliders={setOpenSliders}
+                isOpen={openSliders.addPost}
+              />
+
+              <div className="w-full mt-16">{children}</div>
             </div>
 
-            <div className=" w-1/5 hidden md:block mx-2 space-y-2">
+            <div className=" w-[30%] hidden md:block mx-2 space-y-2 mt-14">
               <div className="bg-zinc-800 h-auto text-white rounded mt-2 shadow">
                 <Accordion
                   defaultValue="customization"
@@ -160,9 +181,15 @@ export default function AuthLayout({ children }) {
                   </Accordion.Item>
                 </Accordion>
               </div>
-              <div className="absolute right-3 top-16 w-1/5">
-                {openSliders.notifications && <Notifications />}
-                {openSliders.messages && <Messages />}
+              <div className="absolute right-3 top-16 w-[25%]">
+                <Notifications
+                  setOpenSliders={setOpenSliders}
+                  isOpen={openSliders.notifications}
+                />
+                <Messages
+                  setOpenSliders={setOpenSliders}
+                  isOpen={openSliders.messages}
+                />
               </div>
             </div>
           </div>

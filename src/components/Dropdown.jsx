@@ -3,10 +3,11 @@ import Link from "next/link";
 import { AuthContext } from "@/layouts/AuthLayout";
 import { Collapse, Menu } from "@mantine/core";
 import { Avatar, Indicator } from "@mantine/core";
+import { useSelector } from "react-redux";
 
 export default function Dropdown({ logout }) {
   const [open, setOpen] = useState(false);
-  const { loggedInUser } = useContext(AuthContext);
+  const { loggedInUser } = useSelector((state) => state.user);
 
   return (
     <Menu transition="rotate-right" transitionDuration={150}>
@@ -35,7 +36,7 @@ export default function Dropdown({ logout }) {
       </Menu.Target>
       <Menu.Dropdown className="absolute w-64 z-50  right-2 rounded-sm">
         <div className="bg-white w-64">
-          <Link href={`/${loggedInUser.username}/profile`} className="w-full">
+          <Link href={`/${loggedInUser?.username}/profile`} className="w-full">
             <Menu.Item>
               <div className="flex space-x-2 items-center">
                 <img src="/user.png" className="w-6 h-6" />

@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import axios from "axios";
 import { Modal } from "@mantine/core";
+import back from "../../public/login.jpg";
+import Image from "next/image";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -28,12 +30,19 @@ function Login() {
       try {
         console.log("adey");
         const response = await axios.post("/api/login", formData);
+
         console.log(response, "from Login");
         if (response.status == 204) {
           return setAlert({
             status: true,
-            message: "Check your internet connection :(",
+            message: "Server Error",
             header: "Network Error",
+          });
+        } else if (response.status == 207) {
+          return setAlert({
+            status: true,
+            message: response.data,
+            header: response.data,
           });
         }
         router.push(`/${response.data.user.username}/dashboard`);
@@ -48,13 +57,15 @@ function Login() {
   };
   return (
     <div className=" w-full transform scale-90 h-full flex flex-col justify-center items-center overflow-hidden">
+      {/* <div className="cover w-full h-full bg-gradient-to-tr  from-zinc-900  z-10 fixed "></div> */}
+      {/* <Image src={back} fill className="cover w-full h-full fixed z-0" /> */}
       <Modal
         opened={alert.status}
         onClose={closeAlert}
         title={<div className="text-red-500">{alert.header}</div>}
         centered
       >
-        <div className="flex flex-col space-y-4 items-center justify-center">
+        <div className="flex flex-col  space-y-4 items-center justify-center">
           <div>
             <img className="w-16 h-16" src={"/error.png"} />
           </div>
@@ -62,7 +73,7 @@ function Login() {
           <div className="text-lg">{alert.message}</div>
         </div>
       </Modal>
-      <div className="w-[33%] bg-zinc-900 rounded h-[65%] relative px-4 mb-7 ">
+      <div className="w-[33%] bg-zinc-900 z-50 rounded h-[65%] relative px-4 mb-7 ">
         <h1 className="bg-cyan-400 absolute font-semibold -top-4 left-[40%] right-[40%] text-center px-1 py-2  rounded">
           <p className="flex text-black font-extrabold">
             Dari
