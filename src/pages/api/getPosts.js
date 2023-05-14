@@ -1,10 +1,8 @@
 import nc from "next-connect";
 import dotenv from "dotenv";
 import { verify } from "jsonwebtoken";
-import Post from "../models/Post";
-// import db from "../models";
+
 import { prisma } from "prisma/db/config";
-import User from "../models/User";
 
 dotenv.config();
 const handler = nc();

@@ -1,7 +1,7 @@
 import nc from "next-connect";
 import dotenv from "dotenv";
 import { verify } from "jsonwebtoken";
-import User from "../models/User";
+
 import { prisma } from "prisma/db/config";
 import { promisify } from "util";
 
